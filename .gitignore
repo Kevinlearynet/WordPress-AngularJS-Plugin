@@ -1,0 +1,15 @@
+# Mac OS
+.idea/*
+.codekit-cache
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Node.js/Gulp
+./node_modules
+./.gulp-cache
+
+# Build
+./dist/**/*.css
+./dist/**/*.js
+./dist/index.html

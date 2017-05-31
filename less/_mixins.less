@@ -1,0 +1,299 @@
+/*------------------------------------------------------------------------------
+  Mixins
+------------------------------------------------------------------------------*/
+
+// Variables
+@disabled: #eceeef;
+@gray-light: #999;
+@gray-lighter: #ccc;
+@color-gray-border: rgba(0, 0, 0, 0.13);
+@color-dark-bg: #373a3c;
+@success: #5cb85c;
+@warning: #f0ad4e;
+@danger: #d9534f;
+@muted-bg: #f5f5f5;
+
+.rotate( @deg ) {
+	-webkit-transform: rotate(@deg);
+	-moz-transform: rotate(@deg);
+	-ms-transform: rotate(@deg);
+	-o-transform: rotate(@deg);
+	transform: rotate(@deg);
+}
+
+.absolute( @top: auto, @right: auto, @bottom: auto, @left: auto ) {
+	position: absolute;
+	top: @top;
+	right: @right;
+	bottom: @bottom;
+	left: @left;
+}
+
+.keyframes(@name; @arguments) {
+	@-moz-keyframes @name { @arguments(); }
+	@-webkit-keyframes @name { @arguments(); }
+	@keyframes @name { @arguments(); }
+}
+
+.animation(@arguments) {
+	-webkit-animation: @arguments;
+	-moz-animation: @arguments;
+	-ms-animation: @arguments;
+	-o-animation: @arguments;
+	animation: @arguments;
+}
+
+.background-size( @props: cover ) {
+	-webkit-background-size: @props;
+	-moz-background-size: @props;
+	-o-background-size: @props;
+	background-size: @props;
+}
+
+.gradient( @startColor: #eee, @endColor: white) {
+	background-color: @startColor;
+	background: -webkit-gradient( linear, top, bottom, from(@startColor) 0%, to(@endColor) 15% );
+	background: -webkit-linear-gradient( top, @startColor 0%, @endColor 15% );
+	background: -moz-linear-gradient( top, @startColor 0%, @endColor 15% );
+	background: -ms-linear-gradient( top, @startColor 0%, @endColor 15% );
+	background: -o-linear-gradient( top, @startColor 0%, @endColor 15% );
+}
+
+.horizontal-gradient (@startColor: #eee, @endColor: white) {
+ 	background-color: @startColor;
+	background-image: -webkit-gradient(linear, left top, right top, from(@startColor), to(@endColor));
+	background-image: -webkit-linear-gradient(left, @startColor, @endColor);
+	background-image: -moz-linear-gradient(left, @startColor, @endColor);
+	background-image: -ms-linear-gradient(left, @startColor, @endColor);
+	background-image: -o-linear-gradient(left, @startColor, @endColor);
+}
+
+.absolute( @top: 0, @right: 0, @bottom: 0, @left: 0, @zIndex: 1 ) {
+	position: absolute;
+	top: @top;
+	right: @right;
+	bottom: @bottom;
+	left: @left;
+	z-index: @zIndex;
+}
+
+.max-media(@maxWidth; @rules) {
+	@media only screen and (max-width: @maxWidth) {
+		@rules();
+	}
+}
+
+.min-media(@minWidth; @rules) {
+	@media only screen and (min-width: @minWidth) {
+		@rules();
+	}
+}
+
+.box-sizing( @args ) {
+	-webkit-box-sizing: @args;
+	-moz-box-sizing: @args;
+	box-sizing: @args;
+}
+
+.box-shadow( @args ) {
+	-webkit-box-shadow: @args;
+	-moz-box-shadow: @args;
+	box-shadow: @args;
+}
+
+.appearance( @args ) {
+	-webkit-appearance: @args;
+	-moz-appearance: @args;
+	-ms-appearance: @args;
+	-o-appearance: @args;
+	appearance: @args;
+}
+
+.border-radius( @radius ) {
+	border-radius: @radius;
+	-webkit-border-radius: @radius;
+	-moz-border-radius: @radius;
+}
+
+.transition( @props ) {
+	-webkit-transition: @props;
+	-moz-transition: @props;
+	-o-transition: @props;
+	transition: @props;
+}
+
+.transform( @props ) {
+	-webkit-transform: @props;
+	-moz-transform: @props;
+	-ms-transform: @props;
+	-o-transform: @props;
+	transform: @props;
+}
+
+.background-size( @props ) {
+	-webkit-background-size: @props;
+	-moz-background-size: @props;
+	-o-background-size: @props;
+	background-size: @props;
+}
+
+.clearfix() {
+	&:after {
+		visibility: hidden;
+		display: block;
+		font-size: 0;
+		content: " ";
+		clear: both;
+		height: 0;
+	}
+}
+
+.include-custom-font( @label, @family, @weight, @style ) {
+	@font-face {
+		font-family: @label;
+		src: url( "/_/fonts/@{family}.eot" );
+		src: url( "/_/fonts/@{family}.eot?#iefix" ) format( "embedded-opentype" ),
+			url( "/_/fonts/@{family}.woff2" ) format( "woff2" ),
+			url( "/_/fonts/@{family}.woff" ) format( "woff" ),
+			url( "/_/fonts/@{family}.ttf" ) format( "truetype" ),
+			url( "/_/fonts/@{family}.svg#@{family}" ) format( "svg" );
+		font-weight: @weight;
+		font-style: @style;
+	}	
+}
+
+// --------------------------------------------------
+// Flexbox LESS mixins
+// The spec: http://www.w3.org/TR/css3-flexbox
+// --------------------------------------------------
+
+// Flexbox display
+// flex or inline-flex
+.flex-display(@display: flex) {
+	display: ~"-webkit-@{display}";
+	display: ~"-moz-@{display}";
+	display: ~"-ms-@{display}box"; // IE10 uses -ms-flexbox
+	display: ~"-ms-@{display}"; // IE11
+	display: @display;
+}
+
+// The 'flex' shorthand
+// - applies to: flex items
+// <positive-number>, initial, auto, or none
+.flex(@columns: initial) {
+  -webkit-flex: @columns;
+     -moz-flex: @columns;
+      -ms-flex: @columns;
+          flex: @columns;
+}
+
+// Flex Flow Direction
+// - applies to: flex containers
+// row | row-reverse | column | column-reverse
+.flex-direction(@direction: row) {
+  -webkit-flex-direction: @direction;
+     -moz-flex-direction: @direction;
+      -ms-flex-direction: @direction;
+          flex-direction: @direction;
+}
+
+// Flex Line Wrapping
+// - applies to: flex containers
+// nowrap | wrap | wrap-reverse
+.flex-wrap(@wrap: nowrap) {
+  -webkit-flex-wrap: @wrap;
+     -moz-flex-wrap: @wrap;
+      -ms-flex-wrap: @wrap;
+          flex-wrap: @wrap;
+}
+
+// Flex Direction and Wrap
+// - applies to: flex containers
+// <flex-direction> || <flex-wrap>
+.flex-flow(@flow) {
+  -webkit-flex-flow: @flow;
+     -moz-flex-flow: @flow;
+      -ms-flex-flow: @flow;
+          flex-flow: @flow;
+}
+
+// Display Order
+// - applies to: flex items
+// <integer>
+.flex-order(@order: 0) {
+  -webkit-order: @order;
+     -moz-order: @order;
+      -ms-order: @order;
+          order: @order;
+}
+
+// Flex grow factor
+// - applies to: flex items
+// <number>
+.flex-grow(@grow: 0) {
+  -webkit-flex-grow: @grow;
+     -moz-flex-grow: @grow;
+      -ms-flex-grow: @grow;
+          flex-grow: @grow;
+}
+
+// Flex shrink
+// - applies to: flex item shrink factor
+// <number> 
+.flex-shrink(@shrink: 1) {
+  -webkit-flex-shrink: @shrink;
+     -moz-flex-shrink: @shrink;
+      -ms-flex-shrink: @shrink;
+          flex-shrink: @shrink;
+}
+
+// Flex basis
+// - the initial main size of the flex item
+// - applies to: flex itemsnitial main size of the flex item
+// <width> 
+.flex-basis(@width: auto) {
+  -webkit-flex-basis: @width;
+     -moz-flex-basis: @width;
+      -ms-flex-basis: @width;
+          flex-basis: @width;
+}
+
+// Axis Alignment
+// - applies to: flex containers
+// flex-start | flex-end | center | space-between | space-around 
+.justify-content(@justify: flex-start) {
+  -webkit-justify-content: @justify;
+     -moz-justify-content: @justify;
+      -ms-justify-content: @justify;
+          justify-content: @justify;
+}
+
+// Packing Flex Lines
+// - applies to: multi-line flex containers
+// flex-start | flex-end | center | space-between | space-around | stretch 
+.align-content(@align: stretch) {
+  -webkit-align-content: @align;
+     -moz-align-content: @align;
+      -ms-align-content: @align;
+          align-content: @align;
+}
+
+// Cross-axis Alignment
+// - applies to: flex containers
+// flex-start | flex-end | center | baseline | stretch 
+.align-items(@align: stretch) {
+  -webkit-align-items: @align;
+     -moz-align-items: @align;
+      -ms-align-items: @align;
+          align-items: @align;
+}
+
+// Cross-axis Alignment
+// - applies to: flex items
+// auto | flex-start | flex-end | center | baseline | stretch 
+.align-self(@align: auto) {
+  -webkit-align-self: @align;
+     -moz-align-self: @align;
+      -ms-align-self: @align;
+          align-self: @align;
+}

@@ -1,0 +1,45 @@
+/**
+ * CSS3 Loading Animation
+ */
+@size: 50px;
+
+.loading( @size: "50px" ) {
+	@initial: ( @size * 0.75 );
+	position: relative;
+	height: @size;
+	width: @size;
+	clip: rect( 0, @size, @size, 0 );
+	animation: animateLoader 2s linear infinite;
+	display: inline-block;
+
+	&:after {
+		content: '';
+		.absolute(0,0,0,0);
+		height: @size;
+		width: @size;
+		clip: rect( 0, @size, @size, @initial );
+		border-radius: 50%;
+		box-shadow: inset @success 0 0 0 2px;
+		animation: animateLoader2 2s linear infinite;
+	}
+}
+
+.keyframes( animateLoader, {
+	0% {
+		.rotate(0deg);
+	}
+
+	100% {
+		.rotate(360deg);
+	}
+});
+
+.keyframes( animateLoader2, {
+	0% {
+		.rotate(-180deg);
+	}
+
+	100% {
+		.rotate(180deg);
+	}
+});
