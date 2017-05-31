@@ -6,10 +6,10 @@
 .LSOverride
 
 # Node.js/Gulp
-./node_modules
-./.gulp-cache
+node_modules
+.gulp-cache
 
 # Build
-./dist/**/*.css
-./dist/**/*.js
-./dist/index.html
+dist/**/*.css
+dist/**/*.js
+dist/index.html
