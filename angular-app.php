@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name: Angular.js App Demo
- * Plugin URI: https://www.kevinleary.net/wordpress-angular-plugin/
+ * Plugin Name: WordPress Angular SPA Demo
+ * Plugin URI: https://github.com/Kevinlearynet/wordpress-angular-plugin
  * Description: Demo of an Angular.js app setup inside of a WordPress plugin.
  * Author: Kevin Leary
  * Version: 0.0.1
