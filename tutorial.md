@@ -7,19 +7,18 @@ The tutorial will show you how to setup Angular.js inside of a WordPress plugin 
 
 ## Table of Contents
 
-1. Concept Overview
-1. WordPress Plugin
-	1. Routing
+1. [Tutorial Overview](#tutorial-overview)
+1. [WordPress Plugin](#wordpress-plugin)
+	1. Routing for `/api/:endpoint/*`
 	1. Why a WordPress plugin and not a theme or separate site entirely?
-1. Front-end
-1. Gulp Build
+1. [Angular Front-end](#angular-frontend)
+	1. HTML5 `pushState` routing
+1. [Gulp Build](#gulp-build)
 	1. Auto-versioning for CSS/JS
 	1. Concat & minify
 	1. ng-annotate 
-1. Routing
-1. Securing with CORS
 
-## Concept Overview
+## <a name="tutorial-overview">Tutorial Overview</a>
 
 This WordPress Angular.js tutorial should help you grasp a few key things about working with Angular.js inside of WordPress, specifically when using a self-installed WordPress install as a backend API service for serving HTTP requests to an Angular.js client on the front-end. The [sample plugin on GitHub](https://github.com/Kevinlearynet/wordpress-angular-plugin) demonstrations the following concept I commonly come accross when building microservices with this approach:
 
@@ -56,7 +55,9 @@ In my opinion there are a few key benefits to doing this inside of a WordPress p
 
 The Angular.js app is currently using Angular 1. Most of the project I work on at the moment are still using Angular 1, only a few have made the switch to 2. Because some of this code is directly pulled from those projects I found it easier to work with Angular 1. **In the future I will update this to Angular 2 on another branch.**
 
-### HTML5 Routing
+### HTML5 `pushState` Routing
+
+When we visit our Angular
 
 Routing is handled by the popular [ui-router](https://ui-router.github.io/) module, and we've specifically setup the index.html route in our WordPress plugin to support it. UI router is responsible for handling every route underneath the main `/wordpress-angular-plugin/` path.
 
@@ -94,11 +95,3 @@ The `less` task is pretty straight forward. It compiles LESS to CSS, with the fo
 Gulp runs an `html` task that runs a custom local plugin inside of `./build/inject-version.js`. This task will automatically add version strings to CSS and JS assets included in our HTML source so that the latest version of our CSS and JS changes are cached by browsers. 
 
 The `inject-version` plugin will check the modified time of our compiled JS and CSS within the `./dist/` directory. The modified timestamp for each file will then be added to our `./views/index.tmp.html` template, replacing template tags and compiling the HTML we serve for our Angular app to `./dist/index.html`. I put this in the `./dist/` directory to avoid any mistaking it for a file that should be editted. Anything that exists inside of the `./views/` directory can be editted directly and is not changed by the `html` build task.
-
-## Securing with CORS
-
-The final step here is to provide CORS header in order to lock down requests to our domain only. This is something we handle on the server-side inside of our WordPress plugin. The following method inside of our plugin's `ngApp` class handles this for us:
-
-~~~.language-php
-
-~~~

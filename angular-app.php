@@ -10,9 +10,10 @@
 
 class ngApp
 {	
-	private $plugin_dir;
-	private $html_route;
-	private $api_route;
+	public $plugin_dir;
+	public $plugin_url;
+	public $html_route;
+	public $api_route;
 
 
 	/**
@@ -22,6 +23,7 @@ class ngApp
 
 		// General
 		$this->plugin_dir = plugin_dir_path( __FILE__ );
+		$this->plugin_url = plugins_url( '/', __FILE__ );
 
 		// Routing
 		$this->api_route = '^api/weather/(.*)/?'; // Matches /api/weather/{position}
@@ -97,6 +99,20 @@ class ngApp
 
 
 	/**
+	 * Auto-version Assets
+	 */
+	public function auto_version_file( $path_to_file ) {
+		$file = $this->plugin_dir . $path_to_file;
+		if ( ! file_exists( $file ) ) return false;
+
+		$mtime = filemtime( $file );
+		$url = $this->plugin_url . $path_to_file . '?v=' . $mtime;
+
+		return $url;
+	}
+
+
+	/**
 	 * Intercept WP Router
 	 *
 	 * Intercept WordPress rewrites and serve a 
@@ -111,16 +127,11 @@ class ngApp
 
 		// Serve HTML
 		ob_start();
-		include_once( $this->plugin_dir . 'dist/index.html' );
+		$main_js = $this->auto_version_file( 'dist/js/main.js' );
+		$main_css = $this->auto_version_file( 'dist/css/main.css' );
+		include_once( $this->plugin_dir . 'views/index.php' );
 		$html = ob_get_clean();
 		die( $html );
-	}
-
-	/**
-	 * Weather Lookup
-	 */
-	public function weather_forecast() {
-		
 	}
 
 } // class ngApp

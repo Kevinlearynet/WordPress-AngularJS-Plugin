@@ -33,13 +33,7 @@ mainApp.config( function( $urlRouterProvider, $locationProvider ) {
 // Boot
 mainApp.run( function( $rootScope, _ ) {
 
-	// Routing $scope variables
-	$rootScope.$on( '$stateChangeStart', function( event, toState, toParams, fromState, fromParams, options ) {
-		$rootScope.toState = toState;
-		$rootScope.fromState = fromState;
-	} );
-
-	// Logging for errors
+	// Log routing errors
 	$rootScope.$on( "$stateChangeError", console.error.bind( console, '$stateChangeError' ) );
 
 	// Global lodash

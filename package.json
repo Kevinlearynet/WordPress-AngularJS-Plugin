@@ -14,7 +14,6 @@
 		"gulp-autoprefixer": "^3.1.1",
 		"gulp-clean-css": "^3.0.4",
 		"gulp-fs-cache": "^0.1.0",
-		"gulp-htmlmin": "^3.0.0",
 		"gulp-include": "^2.3.1",
 		"gulp-less": "^3.3.0",
 		"gulp-ng-annotate": "^2.0.0",
@@ -22,8 +21,6 @@
 		"gulp-sourcemaps": "^2.5.1",
 		"gulp-uglify": "^2.1.2",
 		"gulp-util": "^3.0.8",
-		"md5": "^2.2.1",
-		"pump": "^1.0.2",
-		"through2": "^2.0.3"
+		"pump": "^1.0.2"
 	}
 }

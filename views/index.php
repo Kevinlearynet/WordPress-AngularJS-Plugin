@@ -4,15 +4,15 @@
 	<meta charset="UTF-8" />
 	<base href="/wordpress-angular-plugin/">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-	<title>%PAGE_TITLE%</title>
+	<title><?php echo $page_title; ?></title>
 	<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,700|Roboto+Condensed:400,700" async>
 	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" async>
-	<link href="%PLUGIN_DIR%%MAIN_CSS%" type="text/css" rel="stylesheet" media="screen" />
+	<link href="<?php echo $main_css; ?>" type="text/css" rel="stylesheet" media="screen" />
 </head>
 <body ng-app="mainApp" ng-cloak>
 
 <nav class="navbar navbar-inverse navbar-toggleable-md bg-inverse" role="navigation">
-	<a class="navbar-brand mr-auto" ui-sref="/">
+	<a class="navbar-brand mr-auto" ui-sref="home">
 		<img src="https://angularjs.org/img/angularjs-for-header-only.svg" height="40" alt="Angular.js">
 	</a>
 
@@ -28,7 +28,7 @@
 	</div>
 </main>
 
-<script type="text/javascript" src="%PLUGIN_DIR%%MAIN_JS%" async></script>
+<script type="text/javascript" src="<?php echo $main_js; ?>" async></script>
 
 <script>
 (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=

@@ -6,7 +6,7 @@
 mainApp.config( function( $stateProvider, WP ) {
 	$stateProvider.state( {
 		name: 'home',
-		url: '/home/',
+		url: '/',
 		templateUrl: WP.plugin_url + '/views/home.html',
 		controller: 'homeCtrl'
 	} );

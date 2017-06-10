@@ -18,16 +18,12 @@ const rename = require( 'gulp-rename' );
 const sourcemaps = require( 'gulp-sourcemaps' );
 const fs = require( 'fs' );
 const util = require( 'gulp-util' );
-const htmlmin = require( 'gulp-htmlmin' );
-const injectVersion = require( './build/inject-version' );
-const pluginDir = '/wp-content/plugins/wordpress-angular-plugin';
 
 // Build tasks
 gulp.task( 'less', compileLESS );
-gulp.task( 'js-main', compileMainJS );
-gulp.task( 'html', compileHTML );
+gulp.task( 'js', compileJS );
 gulp.task( 'default', watch );
-gulp.task( 'build', [ 'less', 'js-main', 'html' ] );
+gulp.task( 'build', [ 'less', 'js' ] );
 
 // Error handler
 function next( error ) {
@@ -36,7 +32,7 @@ function next( error ) {
 }
 
 // Compile JavaScript
-function compileMainJS() {
+function compileJS() {
 	var jsCache = fsCache( '.gulp-cache/js' );
 
 	return pump( [
@@ -75,35 +71,8 @@ function compileLESS() {
 	], next );
 }
 
-// Compile HTML
-function compileHTML() {
-	var replacements = {
-		files: {
-			'%MAIN_JS%': './dist/js/main.js',
-			'%MAIN_CSS%': './dist/css/main.css'
-		},
-		strings: {
-			'%PLUGIN_DIR%': pluginDir,
-			'%PAGE_TITLE%': 'WordPress Angular.js Plugin Demo'
-		}
-	};
-
-	return pump( [
-		gulp.src( './views/index.tmp.html' ),
-		injectVersion( replacements ),
-		htmlmin( {
-			collapseWhitespace: true
-		} ),
-		rename( 'index.html' ),
-		gulp.dest( './dist' )
-	], next );
-}
-
 // Watch files and run tasks if they change
 function watch() {
 	gulp.watch( [ 'less/*.less', 'js/**/*.less' ], [ 'less' ] );
-	gulp.watch( 'js/**/*.js', [ 'js-main' ] );
-	gulp.watch( 'dist/**/*.js', [ 'html' ] );
-	gulp.watch( 'dist/**/*.css', [ 'html' ] );
-	gulp.watch( 'views/**/*.tmp.html', [ 'html' ] );
+	gulp.watch( 'js/**/*.js', [ 'js' ] );
 }
