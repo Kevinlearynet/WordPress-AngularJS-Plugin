@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: WordPress Angular SPA Demo
+ * Plugin Name: WordPress Angular Plugin Demo
  * Plugin URI: https://github.com/Kevinlearynet/wordpress-angular-plugin
  * Description: Demo of an Angular.js app setup inside of a WordPress plugin.
  * Author: Kevin Leary
@@ -27,7 +27,7 @@ class ngApp
 
 		// Routing
 		$this->api_route = '^api/weather/(.*)/?'; // Matches /api/weather/{position}
-		$this->html_route = '/' . dirname( __FILE__ ) . '/'; // Matches /wordpress-angular-plugin/
+		$this->html_route = '/' . basename( dirname( __FILE__ ) ) . '/'; // Matches /wordpress-angular-plugin/
 		add_filter( 'do_parse_request', array( $this, 'intercept_wp_router' ), 1, 3 );
 		add_filter( 'rewrite_rules_array', array( $this, 'rewrite_rules' ) );
 		add_filter( 'query_vars', array( $this, 'query_vars' ) );
