@@ -5,21 +5,6 @@ The tutorial will show you how to setup Angular.js inside of a WordPress plugin 
 * [Live Demo](https://www.kevinleary.net/wordpress-angular-plugin/)
 * [GitHub Source](https://github.com/Kevinlearynet/wordpress-angular-plugin)
 
-## Table of Contents
-
-1. [Tutorial Overview](#tutorial-overview)
-1. [WordPress Plugin](#wordpress-plugin)
-	1. Routing for `/api/:endpoint/*`
-	1. Why a WordPress plugin and not a theme or separate site entirely?
-1. [Angular Front-end](#angular-frontend)
-	1. HTML5 `pushState` routing
-1. [Gulp Build](#gulp-build)
-	1. Auto-versioning for CSS/JS
-	1. Concat & minify
-	1. ng-annotate 
-
-## <a name="tutorial-overview">Tutorial Overview</a>
-
 This WordPress Angular.js tutorial should help you grasp a few key things about working with Angular.js inside of WordPress, specifically when using a self-installed WordPress install as a backend API service for serving HTTP requests to an Angular.js client on the front-end. The [sample plugin on GitHub](https://github.com/Kevinlearynet/wordpress-angular-plugin) demonstrations the following concept I commonly come accross when building microservices with this approach:
 
 1. Setup HTML5 pushState routing
@@ -30,50 +15,215 @@ This WordPress Angular.js tutorial should help you grasp a few key things about 
 
 If there's a common scenario you would like me to add to this tutorial please let me know in the [blog post comments at kevinleary.net](https://www.kevinleary.net/blog/).
 
-## WordPress Plugin
+## Table of Contents
 
-To begin we need to start with a fresh WordPress plugin, which I'm assuming you know how to setup. If not then I recommend reading the [detailed plugin guidelines](https://developer.wordpress.org/plugins/wordpress-org/detailed-plugin-guidelines/) provided on WordPress.org.
+1. [WordPress Plugin](#wordpress-plugin)
+	1. Why a plugin and not a theme?
+	1. Server-side routing
+	1. Auto-versioning CSS/JS
+	1. API Requests to WordPress
+1. [Angular Front-end](#angular-frontend)
+	1. Index template
+	1. Front-end routing
+	1. Concatenating JS includes
+	1. HTML5 `pushState` routing
+1. [Gulp Build](#gulp-build)
+	1. Watch & Build CSS/JS
+	1. JS Compile Tasks
+	1. LESS Compile Tasks
 
-### Routing
+## <a name="wordpress-plugin"></a>WordPress Plugin
 
-The PHP source in the plugin will primarily handle routing for us. This includes the following:
+To begin we need to start with a fresh WordPress plugin, which I'm assuming you know how to setup. If not then I recommend reading the [detailed plugin guidelines](https://developer.wordpress.org/plugins/wordpress-org/detailed-plugin-guidelines/) provided on WordPress.org. The plugin will serve as a backend to our angular app, handling the following tasks:
 
 1. Add routing rules to WordPress for serving custom API endpoints
-2. Add routing rules to WordPress to load an HTML file at `/wordpress-angular-plugin/` that will support HTML5 pushState routing in our Angular app
+2. Add routing rules to WordPress to load our base app index template at `/wordpress-angular-plugin/**`. The trailing wildcard is critical for supporting HTML5 pushState routing within our Angular app.
 3. Process and cache HTTP API requests to third-party providers on the server-side (i.e. the US National Weather Service)
 
-Although the third-party API we request on the server-side in this plugin is not secured in anyway, this approach can be handy when you need to authentication with another API.
+### Why a plugin and not a theme?
 
-### Why a plugin and not a theme, or separate site entirely?
-
-In my opinion there are a few key benefits to doing this inside of a WordPress plugin:
+In my opinion there are a few key benefits to building both the backend and front-end inside of a single WordPress plugin:
 
 1. **Simplicity:** I don't have to support two separate servers, one for a WordPress backend API and another for serving the Angular.js app's HTML. With this approach I can easily do both from one environment.
-2. **Access to WP:** I've found that it's useful to have easy server-side access to WordPress when working with it as a backend. A few scenarios include processing Gravity Forms submissions, passing values from server-side to client-side with `wp_localize_script()` when users are logged in, and various other things.
+1. **Access to WP:** I've found that it's useful to have easy server-side access to WordPress when working with it as a backend. A few scenarios include processing Gravity Forms submissions, passing values from server-side to client-side with `wp_localize_script()` when users are logged in, and various other things.
+1. **Portability** By isolating everything into a WordPress plugin we can easily move our entire app from site to site, enabling and disabling on demand.
 
-## Angular App
+If you disagree that's fine, all of the logic here could be used within a WordPress theme as well, the same concepts apply.
 
-The Angular.js app is currently using Angular 1. Most of the project I work on at the moment are still using Angular 1, only a few have made the switch to 2. Because some of this code is directly pulled from those projects I found it easier to work with Angular 1. **In the future I will update this to Angular 2 on another branch.**
+### Server-side routing
 
-### HTML5 `pushState` Routing
+Our WordPress plugin defines the URL where our Angular app will load based on the path of the plugin directory. The `intercept_wp_router()` method is applied to the `do_parse_request` filter to handle this:
 
-When we visit our Angular
+~~~.language-php
+/**
+ * Intercept WP Router
+ *
+ * Intercept WordPress rewrites and serve a 
+ * static HTML page for our angular.js app.
+ */
+public function intercept_wp_router( $continue, WP $wp, $extra_query_vars ) {
 
-Routing is handled by the popular [ui-router](https://ui-router.github.io/) module, and we've specifically setup the index.html route in our WordPress plugin to support it. UI router is responsible for handling every route underneath the main `/wordpress-angular-plugin/` path.
+	// Conditions for url path
+	$url_match = ( substr( $_SERVER['REQUEST_URI'], 0, strlen( $this->html_route ) ) === $this->html_route );
+	if ( ! $url_match ) 
+		return $continue;
+
+	// Serve HTML
+	ob_start();
+
+	// Vars for index view
+	$main_js = $this->auto_version_file( 'dist/js/main.js' );
+	$main_css = $this->auto_version_file( 'dist/css/main.css' );
+	$plugin_url = $this->plugin_url;
+
+	// Load index view
+	include_once( $this->plugin_dir . 'views/index.php' );
+	$html = ob_get_clean();
+	die( $html );
+}
+~~~
+
+If you want to change the base URL for your app to something custom you'll need to change the value of the public variable `html_route`. This is set in the `__constuct()` method of the `ngApp` Class. That's a mouthful, but basically you would find and modify this line within the plugin:
+
+~~~.language-php
+dirname( __FILE__ )
+~~~
+
+In the case of this tutorial, our main plugin file is `wordpress-angular-plugin/wordpress-angular-plugin.php` so the Angular app will load at `/wordpress-angular-plugin/` out of the box. **You can change this whatever you like in the plugin to customize the URL.**
+
+Once you load up `https://www.yoursite.com/wordpress-angular-plugin/` you should see the same Angular app demo currently available at:
+
+[kevinleary.net/wordpress-angular-plugin/](https://www.kevinleary.net/wordpress-angular-plugin/)
+
+### Auto-versioning CSS/JS
+
+Google Chrome and other browsers will cache our *.css and *.js for an indefinite period of time. If we make changes to our Angular app's code, or our LESS stylesheet, browsers won't know the file has changed and could serve the old, previously cached version of the file to repeat visitors. For this reason, it's very important that we add version strings to static resources, or in our case the `/dist/js/main.js` and `/dist/css/main.css` files. **This is especially important for single page apps** because we are effectively loading EVERYTHING in the browser.
+
+Luckily, I've included a setup in this plugin that will handle this for you automatically. This is the only thing that PHP is actually used for in the `index.php` template. 
+
+Here's the method that handles this for us:
+
+~~~.language-php
+/**
+ * Auto-version Assets
+ */
+public function auto_version_file( $path_to_file ) {
+	$file = $this->plugin_dir . $path_to_file;
+	if ( ! file_exists( $file ) ) return false;
+
+	$mtime = filemtime( $file );
+	$url = $this->plugin_url . $path_to_file . '?v=' . $mtime;
+
+	return $url;
+}
+~~~
+
+Using PHP's `filemtime()` function we check the modified time of the CSS and JS files, and then we add the timestamp returned to the end of each file as a "version string" like this:
+
+* `/dist/css/main.css?v=1497114238`
+* `/dist/js/main.js?v=1497114238`
+
+Now you'll always have up to date assets loading for your users!
 
 ### API Requests to WordPress
 
-The demo app makes an API request to an endpoint defined in our plugin to retreive the weather for a users location. This provides a basic demonstration of how to write a PHP backend service that processes input from our Angular app.
+Now that we have the basic structure for an Angular app setup within a WordPress plugin let's look at how to make requests from client (Angular) to server (WordPress) by defining a few custom HTTP API routes. For demo purposes I've wired together a backend API that will:
 
-## Gulp
+1. Handle incoming requests to `/api/weather/{latitude:longitude}/`
+2. Lookup a weather forecast for the provided lat/long using the National Weather Service API
+3. Return the response body as JSON back to the client
+
+In a real-world scenario we could just do this inside of Angular entirely, but it serves as a good example to cover common situations where:
+
+1. You want to make requests to a secured API without exposing keys on the client-side
+2. You want to cache the results of remote API responses locally to server faster responses, and avoid overage costs for API's where you pay by the request
+3. You want to serve cached results of remote API requests that have been performed by a worker process (_bonus points for performance_)
+
+In the context of our demo app, an API request is made to the weather API endpoint defined in our plugin to retreive the weather for a users location. This provides a basic demonstration of how to write a PHP backend service that processes input from our Angular app.
+
+**Important Note**
+
+I am deliberately NOT using the official [WP REST API](https://wordpress.org/plugins/json-rest-api/) here. I personally believe in building minimal systems that solve specific problems, I think it make a big difference in terms of maintenance, sustainability and security. This is entirely my own opinion, but I beleive it's better to build your own microservices like this rather than load in the entire WP JSON api for many circumstances.
+
+## <a name="angular-frontend"></a>Angular App Front-end
+
+_The Angular.js app is currently using Angular 1. Most of the project I work on at the moment are still using Angular 1, only a few have made the switch to 2. Because some of this code is directly pulled from those projects I found it easier to work with Angular 1. **In the future I will update this to Angular 2 on another branch.**_
+
+The Angular 1 app in this demo is very basic, but it does handle a few important things well:
+
+1. Concatenates, minifies and proressively enhances LESS and JS using Gulp
+1. Provides HTML5 pushState routing - NO hashbangs here (e.g. www.you.com/pathname/#/slug)
+1. Handles 404's beneath our plugin's top level URL path
+1. Route separation - Individual routes/views/controllers are broken down into separate files. When Angular projects get large and span multiple developers this is very helpful.
+1. Uses the `$resource` service to interface with a custom HTTP API we'll define in WordPress
+1. **Doesn't rely on the WordPress JSON API in anyway**
+1. Provides access to the [Lodash](https://lodash.com/) as an Angular service and template helper
+
+### Index template
+
+Our Angular app is served from a single file: `./views/index.php`. This is where we define our `[ng-app]`, the structure of our HTML doc, and the `<ui-view />` directive provided by [ui-router](https://ui-router.github.io/). This tag will specify where every view inside of our Angular app will load when the URL changes or initially loads.
+
+Using *.php and not *.html allows us to easily pass values from WordPress into Angular by adding them to an inline JSON object before we load `main.js`. This is a similar approadch to using the `wp_localize_script()` function in WordPress to pass PHP values from a plugin or theme into JS.
+
+### Front-end Routing
+
+The Angular app is served from a single file within the plugin: `./views/index.php`. This is where we define our `[ng-app]`, the structure of our HTML doc, and the `<ui-view />` directive provided by [ui-router](https://ui-router.github.io/). This tag will specify where every view inside of our Angular app will load when the URL changes or initially loads **at or below the app path defined by our plugin.**
+
+This means that anything underneath this URL is handled by Angular.js routing and the [ui-router](https://ui-router.github.io/) module. We've specifically setup the way we route to and load in our `/views/index.php` file to support this structure. This will handle the WordPress angular routing in a seamless way so that:
+
+1. If you visit the URL of an Angular defined route directly it will load in the expected route/view/controller configuration
+2. When you browse from view-to-view within the app fully qualified URL's will be loaded into the browser using the HTML5 pushState API
+
+It is only possible to do this if **EVERYTHING** underneath our `/wordpress-angular-plugin/` page is handled by Angular and UI router.
+
+UI-Router defines routes for everything served by Angular undereath the `/wordpress-angular-plugin/` directory. Here's what a typical route definition looks like.
+
+~~~.language-javascript
+/**
+ * Home View
+ */
+
+// Route
+mainApp.config( function( $stateProvider, WP ) {
+	$stateProvider.state( {
+		name: 'home',
+		url: '/',
+		templateUrl: WP.plugin_url + '/views/home.html',
+		controller: 'homeCtrl'
+	} );
+} );
+
+// Controller
+mainApp.controller( 'homeCtrl', function( $scope ) {} );
+~~~
+
+This is pulled right from the contents of the `/views/home.html` template. The `mainApp` is our main ng module defined in `/js/main.js` with `angular.module()`.
+
+### Concatenating JS Includes
+
+When you look at the source of `/js/main.js` you'll see a number of lines that look like this:
+
+~~~.language-javascript
+// =require ../vendor/angular-sanitize.js
+// =require ../vendor/angular-animate.js
+// =require ../vendor/angular-ui-router.js
+~~~
+
+These define external JS files that we want to include in our JS app. These are handled by gulp during the compile process with the help of the [gulp-include](https://www.npmjs.com/package/gulp-include) plugin. For now I find that this approach is straight forward and easier to work with than Webpack or CommonJS, but if you find that your `/dist/js/main.js` file is getting too large then it may be best to work with [Webpack](https://webpack.github.io/) instead.
+
+_More information on the build process can be found in the [compiling with gulp](#gulp-compiling) section._
+
+## <a name="gulp-compiling"></a>Compiling with Gulp
 
 The plugin uses [Gulp](http://gulpjs.com/) to compile our CSS/JS and also prepares our HTML, with a few smart additions.
 
-### Build Everything
+### Watch & Build CSS/JS
 
-if you've just cloned the repo you can build everything with the `gulp build` command. This will run through every process needed to everything we need to serve our micro app (CSS/JS/HTML).
+I recommend that you use the watch process to build your CSS/JS on-demand as it changes. This provides a faster web development workflow. To start gulp in watch mode open a Terminal window and go to the directory where you've cloned this plugin. Enter the `gulp` command in your prompt and Gulp will begin watching for JS/CSS changes.
 
-### JS
+If you've just cloned the repo you can build everything with the `gulp build` command. This will run through every process needed to everything we need to serve our micro app (CSS/JS/HTML).
+
+### JS Compile Task
 
 The `js-main` gulp task uses a few gulp plugins to compile and prepare our JavaScript files for the app. This part of the turorial is entirely opinionated, it's a set of tasks that I commonly use so I've included them here.
 
@@ -83,15 +233,9 @@ The `js-main` gulp task uses a few gulp plugins to compile and prepare our JavaS
 1. Uglify handles minification to compress our source
 1. Caching is added to help speed up Uglify minification
 
-### LESS
+### LESS Compile Task
 
 The `less` task is pretty straight forward. It compiles LESS to CSS, with the following helpful additions:
 
 1. Backwards support to automatically add browser prefixes with autoprefixer
 2. Concatenation and minification handled by cleanCSS
-
-### HTML (auto-versioning)
-
-Gulp runs an `html` task that runs a custom local plugin inside of `./build/inject-version.js`. This task will automatically add version strings to CSS and JS assets included in our HTML source so that the latest version of our CSS and JS changes are cached by browsers. 
-
-The `inject-version` plugin will check the modified time of our compiled JS and CSS within the `./dist/` directory. The modified timestamp for each file will then be added to our `./views/index.tmp.html` template, replacing template tags and compiling the HTML we serve for our Angular app to `./dist/index.html`. I put this in the `./dist/` directory to avoid any mistaking it for a file that should be editted. Anything that exists inside of the `./views/` directory can be editted directly and is not changed by the `html` build task.

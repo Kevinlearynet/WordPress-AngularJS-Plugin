@@ -28,6 +28,11 @@
 	</div>
 </main>
 
+<script>
+window.WP = {
+	plugin_url: "<?php echo $plugin_url; ?>"
+}
+</script>
 <script type="text/javascript" src="<?php echo $main_js; ?>" async></script>
 
 <script>

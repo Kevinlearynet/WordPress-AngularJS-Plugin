@@ -27,7 +27,7 @@ class ngApp
 
 		// Routing
 		$this->api_route = '^api/weather/(.*)/?'; // Matches /api/weather/{position}
-		$this->html_route = '/wordpress-angular-plugin/'; // Matches /wordpress-angular-plugin/
+		$this->html_route = '/' . dirname( __FILE__ ) . '/'; // Matches /wordpress-angular-plugin/
 		add_filter( 'do_parse_request', array( $this, 'intercept_wp_router' ), 1, 3 );
 		add_filter( 'rewrite_rules_array', array( $this, 'rewrite_rules' ) );
 		add_filter( 'query_vars', array( $this, 'query_vars' ) );
@@ -127,8 +127,13 @@ class ngApp
 
 		// Serve HTML
 		ob_start();
+
+		// Vars for index view
 		$main_js = $this->auto_version_file( 'dist/js/main.js' );
 		$main_css = $this->auto_version_file( 'dist/css/main.css' );
+		$plugin_url = $this->plugin_url;
+
+		// Load index view
 		include_once( $this->plugin_dir . 'views/index.php' );
 		$html = ob_get_clean();
 		die( $html );
