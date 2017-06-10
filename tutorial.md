@@ -1,6 +1,6 @@
 # Angular.js WordPress Tutorial: Building Microsites & SPA's in a Plugin
 
-The tutorial will show you how to setup Angular.js inside of a WordPress plugin to create a stand-alone, API powered, Angular.js micro site or app.
+The tutorial will show you how to setup Angular.js inside of a WordPress plugin to create a stand-alone, API powered, Angular.js single page app or micro site.
 
 * [Live Demo](https://www.kevinleary.net/wordpress-angular-plugin/)
 * [GitHub Source](https://github.com/Kevinlearynet/wordpress-angular-plugin)
