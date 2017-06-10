@@ -20,7 +20,7 @@ const fs = require( 'fs' );
 const util = require( 'gulp-util' );
 const htmlmin = require( 'gulp-htmlmin' );
 const injectVersion = require( './build/inject-version' );
-const pluginDir = '/wp-content/plugins/angular-app';
+const pluginDir = '/wp-content/plugins/wordpress-angular-plugin';
 
 // Build tasks
 gulp.task( 'less', compileLESS );

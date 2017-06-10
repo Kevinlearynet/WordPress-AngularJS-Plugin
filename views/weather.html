@@ -1,0 +1,26 @@
+<section class="ui-view">
+	<h1>Local Weather Forecast</h1>
+	<p class="lead">Lookup an accurate weather forecast in your area using the Geolocation API and the public National Weather Service API.</p>
+
+	<hr>
+
+	<div ng-hide="forecast || loading">
+		<a href class="btn btn-primary" ng-click="lookupWeather()">Find My Forecast</a>
+		<p class="text-muted mt-3">Clicking the following button will prompt you for our location, we need it in order to find the weather in your area.</p>
+	</div>
+
+	<p class="text-success text-loading mt-4" ng-if="loading"><i class="loading-img"></i> Loading&hellip;</p>
+
+	<div class="card mt-4" ng-repeat="period in forecast.properties.periods">
+		<div class="card-block d-flex justify-content-start">
+			<aside class="p-2">
+				<img src="{{ period.icon }}" class="rounded">
+			</aside>
+			<div class="p-2 ml-2">
+				<h4 class="card-title">{{ period.name }}</h4>
+				<h6 class="card-subtitle mb-2 text-muted">{{ period.shortForecast }}, {{ period.temperature }}&deg;{{ period.temperatureUnit }}</h6>
+				<p class="card-text">{{ period.detailedForecast }}</p>
+			</div>
+		</div>
+	</div>
+</section>

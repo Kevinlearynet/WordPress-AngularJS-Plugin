@@ -9,7 +9,7 @@
 	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" async>
 	<link href="%PLUGIN_DIR%%MAIN_CSS%" type="text/css" rel="stylesheet" media="screen" />
 </head>
-<body ng-app="mainApp" ng-controller="masterCtrl as global" ng-cloak>
+<body ng-app="mainApp" ng-cloak>
 
 <nav class="navbar navbar-inverse navbar-toggleable-md bg-inverse" role="navigation">
 	<a class="navbar-brand mr-auto" ui-sref="/">
@@ -18,13 +18,11 @@
 
 	<ul class="nav navbar-nav my-2">
 		<li class="nav-item" ui-sref-active="active"><a class="nav-link" ui-sref="home">Home</a></li>
-        <li class="nav-item" ui-sref-active="active"><a class="nav-link" ui-sref="two">Two</a></li>
-        <li class="nav-item" ui-sref-active="active"><a class="nav-link" ui-sref="three">Three</a></li>
-        <li class="nav-item" ui-sref-active="active"><a class="nav-link" ui-sref="four">Four</a></li>
+        <li class="nav-item" ui-sref-active="active"><a class="nav-link" ui-sref="weather">Weather</a></li>
 	</ul><!--// end .navbar-nav -->
 </nav>
 
-<main class="page-main">
+<main class="page-main my-5">
 	<div class="container">
 		<ui-view />
 	</div>

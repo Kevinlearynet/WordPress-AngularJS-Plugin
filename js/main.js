@@ -9,6 +9,7 @@
 // =require ../vendor/angular-animate.js
 // =require ../vendor/angular-ui-router.js
 
+// App module
 var mainApp = angular.module( "mainApp", [
 	'ng',
 	'ngResource',
@@ -17,59 +18,19 @@ var mainApp = angular.module( "mainApp", [
 	'ngAnimate'
 ] );
 
-/**
- * Lodash Support
- */
+// Third-party support
 mainApp.constant( '_', window._ );
 mainApp.constant( 'WP', {
-	plugin_url: '/wp-content/plugins/angular-app'
+	plugin_url: '/wp-content/plugins/wordpress-angular-plugin'
 } );
 
-/**
- * HTML5 pushState Routing
- */
+// Routing
 mainApp.config( function( $urlRouterProvider, $locationProvider ) {
 	$locationProvider.html5Mode( true );
 	$urlRouterProvider.otherwise( '/' );
 } );
 
-/**
- * Define Route(s)
- */
-mainApp.config( function( $stateProvider, $urlRouterProvider, WP ) {
-
-	$stateProvider
-		.state( {
-			name: 'home',
-			url: '/',
-			templateUrl: WP.plugin_url + '/views/home.html',
-			controller: 'homeCtrl'
-		} )
-		.state( {
-			name: 'two',
-			url: '/two/',
-			templateUrl: WP.plugin_url + '/views/two.html',
-			controller: 'twoCtrl'
-		} )
-		.state( {
-			name: 'three',
-			url: '/three/',
-			templateUrl: WP.plugin_url + '/views/three.html',
-			controller: 'threeCtrl'
-		} )
-		.state( {
-			name: 'four',
-			url: '/four/',
-			templateUrl: WP.plugin_url + '/views/four.html',
-			controller: 'fourCtrl'
-		} );
-} ).run( function run( $rootScope ) {
-	$rootScope.$on( "$stateChangeError", console.error.bind( console, '$stateChangeError' ) );
-} )
-
-/**
- * Run events
- */
+// Boot
 mainApp.run( function( $rootScope, _ ) {
 
 	// Routing $scope variables
@@ -78,20 +39,12 @@ mainApp.run( function( $rootScope, _ ) {
 		$rootScope.fromState = fromState;
 	} );
 
+	// Logging for errors
+	$rootScope.$on( "$stateChangeError", console.error.bind( console, '$stateChangeError' ) );
+
 	// Global lodash
 	$rootScope._ = window._;
-
 } );
 
-/**
- * Master parent controller
- */
-mainApp.controller( 'masterCtrl', function( $scope ) {} );
-
-/**
- * UI Router controllers
- */
-mainApp.controller( 'homeCtrl', function( $scope ) {} );
-mainApp.controller( 'twoCtrl', function( $scope ) {} );
-mainApp.controller( 'threeCtrl', function( $scope ) {} );
-mainApp.controller( 'fourCtrl', function( $scope ) {} );
+// =require home.js
+// =require weather.js

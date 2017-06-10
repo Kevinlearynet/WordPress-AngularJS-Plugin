@@ -1,15 +1,15 @@
 {
-	"name": "self-service",
+	"name": "wordpress-angular-plugin",
 	"version": "0.0.1",
 	"description": "Build process for Angular.js and Bootstrap LESS",
 	"main": "build.js",
-	"repository": "git@github.com:DatapointMedia/self-service.git",
+	"repository": "https://github.com/Kevinlearynet/wordpress-angular-plugin",
 	"scripts": {
 		"build-latest": "git pull; npm update; gulp build;"
 	},
-	"author": "kevinleary.net, SetFive",
+	"author": "kevinleary.net",
 	"license": "ISC",
-	"dependencies": {
+	"devDependencies": {
 		"gulp": "^3.9.1",
 		"gulp-autoprefixer": "^3.1.1",
 		"gulp-clean-css": "^3.0.4",
