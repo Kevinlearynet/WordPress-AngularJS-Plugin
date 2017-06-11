@@ -132,6 +132,7 @@ class ngApp
 			return $continue;
 
 		// Vars for index view
+		global $main_js, $main_css, $plugin_url;
 		$main_js = $this->auto_version_file( 'dist/js/main.js' );
 		$main_css = $this->auto_version_file( 'dist/css/main.css' );
 		$plugin_url = $this->plugin_url;

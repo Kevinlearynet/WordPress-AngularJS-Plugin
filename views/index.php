@@ -1,4 +1,6 @@
-<!DOCTYPE html>
+<?php 
+global $main_js, $main_css, $plugin_url;
+?><!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8" />
