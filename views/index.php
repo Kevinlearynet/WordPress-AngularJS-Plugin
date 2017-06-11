@@ -1,10 +1,10 @@
 <?php 
-global $main_js, $main_css, $plugin_url;
+global $main_js, $main_css, $plugin_url, $base_href;
 ?><!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8" />
-	<base href="/wordpress-angular-plugin/">
+	<base href="<?php echo $base_href; ?>">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 	<title><?php echo $page_title; ?></title>
 	<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,700|Roboto+Condensed:400,700" async>

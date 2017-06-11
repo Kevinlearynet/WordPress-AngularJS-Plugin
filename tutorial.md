@@ -64,7 +64,7 @@ Our WordPress plugin defines the URL where our Angular app will load based on th
 public function intercept_wp_router( $continue, WP $wp, $extra_query_vars ) {
 
 	// Conditions for url path
-	$url_match = ( substr( $_SERVER['REQUEST_URI'], 0, strlen( $this->html_route ) ) === $this->html_route );
+	$url_match = ( substr( $_SERVER['REQUEST_URI'], 0, strlen( $this->base_href ) ) === $this->base_href );
 	if ( ! $url_match ) 
 		return $continue;
 
@@ -83,7 +83,7 @@ public function intercept_wp_router( $continue, WP $wp, $extra_query_vars ) {
 }
 ~~~
 
-If you want to change the base URL for your app to something custom you'll need to change the value of the public variable `html_route`. This is set in the `__constuct()` method of the `ngApp` Class. That's a mouthful, but basically you would find and modify this line within the plugin:
+If you want to change the base URL for your app to something custom you'll need to change the value of the public variable `base_href`. This is set in the `__constuct()` method of the `ngApp` Class. That's a mouthful, but basically you would find and modify this line within the plugin:
 
 ~~~.language-php
 dirname( __FILE__ )

@@ -12,7 +12,7 @@ class ngApp
 {	
 	public $plugin_dir;
 	public $plugin_url;
-	public $html_route;
+	public $base_href;
 	public $api_route;
 	public $versions;
 
@@ -28,7 +28,7 @@ class ngApp
 
 		// Routing
 		$this->api_route = '^api/weather/(.*)/?'; // Matches /api/weather/{position}
-		$this->html_route = '/' . basename( dirname( __FILE__ ) ) . '/'; // Matches /wordpress-angular-plugin/
+		$this->base_href = '/' . basename( dirname( __FILE__ ) ) . '/'; // Matches /wordpress-angular-plugin/
 		add_filter( 'do_parse_request', array( $this, 'intercept_wp_router' ), 1, 3 );
 		add_filter( 'rewrite_rules_array', array( $this, 'rewrite_rules' ) );
 		add_filter( 'query_vars', array( $this, 'query_vars' ) );
@@ -127,15 +127,16 @@ class ngApp
 	public function intercept_wp_router( $continue, WP $wp, $extra_query_vars ) {
 
 		// Conditions for url path
-		$url_match = ( substr( $_SERVER['REQUEST_URI'], 0, strlen( $this->html_route ) ) === $this->html_route );
+		$url_match = ( substr( $_SERVER['REQUEST_URI'], 0, strlen( $this->base_href ) ) === $this->base_href );
 		if ( ! $url_match ) 
 			return $continue;
 
 		// Vars for index view
-		global $main_js, $main_css, $plugin_url;
+		global $main_js, $main_css, $plugin_url, $base_href;
 		$main_js = $this->auto_version_file( 'dist/js/main.js' );
 		$main_css = $this->auto_version_file( 'dist/css/main.css' );
 		$plugin_url = $this->plugin_url;
+		$base_href = $this->base_href;
 
 		// Browser caching for our main template
 		$ttl = DAY_IN_SECONDS;
