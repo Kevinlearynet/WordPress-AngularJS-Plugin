@@ -1,8 +1,19 @@
 # WordPress Angular.js Plugin Demo
 
-A simple demonstration of an Angular.js powered WordPress plugin with HTML5 pushState routing. **For a detailed write-up visit the original blog post: [Building an Angular.js SPA in a WordPress Plugin](https://www.kevinleary.net/angularjs-wordpress-tutorial/)**
+Example setup of using Angular.js inside of a WordPress plugin to create a stand-alone, API powered, Angular.js single page app or micro site. The demo app includes the following concepts:
 
-## Setup
+1. Setup HTML5 pushState routing
+2. Create custom API endpoints that are consumed by Angular's `$resource` service
+3. Build LESS, JS and dynamic HTML with a gulp build
+4. Auto-version CSS and JS inside of a dynamic HTML template (using Gulp)
+5. How to handle it all inside of an isolated WordPress plugin
+
+## Related
+
+* [Tutorial](https://www.kevinleary.net/angularjs-wordpress-tutorial/)
+* [Live Demo](https://www.kevinleary.net/wordpress-angular-plugin/)
+
+## Install
 
 Make sure you have `node`, `npm`, and `gulp` packages installed globally then:
 
