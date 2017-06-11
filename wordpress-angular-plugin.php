@@ -132,11 +132,11 @@ class ngApp
 			return $continue;
 
 		// Vars for index view
-		global $main_js, $main_css, $plugin_url, $base_href;
 		$main_js = $this->auto_version_file( 'dist/js/main.js' );
 		$main_css = $this->auto_version_file( 'dist/css/main.css' );
 		$plugin_url = $this->plugin_url;
 		$base_href = $this->base_href;
+		$page_title = 'WordPress Angular.js Plugin Demo App | kevinleary.net';
 
 		// Browser caching for our main template
 		$ttl = DAY_IN_SECONDS;

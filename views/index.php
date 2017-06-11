@@ -1,5 +1,6 @@
-<?php 
-global $main_js, $main_css, $plugin_url, $base_href;
+<?php
+error_reporting( E_ALL ); 
+ini_set( 'display_errors', 1 ); 
 ?><!DOCTYPE html>
 <html lang="en">
 <head>
