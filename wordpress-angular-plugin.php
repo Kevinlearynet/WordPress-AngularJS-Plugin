@@ -14,6 +14,7 @@ class ngApp
 	public $plugin_url;
 	public $html_route;
 	public $api_route;
+	public $versions;
 
 
 	/**
@@ -65,12 +66,14 @@ class ngApp
 		if ( $status !== 200 ) 
 			wp_send_json_error( $body );
 
-		// Success
+		// Cache control headers, these will cache the 
+		// users local weather forecast in the browser
+		// for 1 day to reduce API requests.
 		$ttl = DAY_IN_SECONDS;
-		$ts = gmdate( "D, d M Y H:i:s", time() + $ttl ) . " GMT";
-		header( "Expires: $ts" );
-		header( "Pragma: cache" );
-		header( "Cache-Control: max-age=$ttl" );
+		header( "Cache-Control: public, max-age=$ttl" );
+		header( "Last-Modified: $last_modified" );
+
+		// Success response
 		wp_send_json_success( $body );
 	}
 
@@ -108,6 +111,9 @@ class ngApp
 		$mtime = filemtime( $file );
 		$url = $this->plugin_url . $path_to_file . '?v=' . $mtime;
 
+		// Store for Last-Modified headers
+		array_push( $this->versions, $mtime );
+
 		return $url;
 	}
 
@@ -125,18 +131,18 @@ class ngApp
 		if ( ! $url_match ) 
 			return $continue;
 
-		// Serve HTML
-		ob_start();
-
 		// Vars for index view
 		$main_js = $this->auto_version_file( 'dist/js/main.js' );
 		$main_css = $this->auto_version_file( 'dist/css/main.css' );
 		$plugin_url = $this->plugin_url;
 
+		// Browser caching for our main template
+		$ttl = DAY_IN_SECONDS;
+		header( "Cache-Control: public, max-age=$ttl" );
+
 		// Load index view
 		include_once( $this->plugin_dir . 'views/index.php' );
-		$html = ob_get_clean();
-		die( $html );
+		exit;
 	}
 
 } // class ngApp
