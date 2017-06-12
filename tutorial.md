@@ -1,19 +1,17 @@
-# Angular.js WordPress Tutorial: Building Microsites & SPA's in a Plugin
+The tutorial will show you how to setup and work with Angular.js inside of a WordPress plugin to create a stand-alone, API powered, Angular.js single page app or microsite that is available at a defined path of a WordPress website.
 
-The tutorial will show you how to setup Angular.js inside of a WordPress plugin to create a stand-alone, API powered, Angular.js single page app or micro site.
+<p><a href="https://www.kevinleary.net/wordpress-angular-plugin/" class="btn btn-primary-outline">Live Demo</a>&nbsp;&nbsp;&nbsp;<a href="https://github.com/Kevinlearynet/wordpress-angular-plugin" class="btn btn-primary-outline">GitHub Source</a></p>
 
-* [Live Demo](https://www.kevinleary.net/wordpress-angular-plugin/)
-* [GitHub Source](https://github.com/Kevinlearynet/wordpress-angular-plugin)
+By the end of this tutorial you should grasp a few key things about working with Angular.js inside of WordPress. Using a self-installed WordPress install as a backend API service for serving HTTP requests to a front-end Angular.js client is a powerful combination. If you're an eager beaver you can dive right into the [sample plugin on GitHub](https://github.com/Kevinlearynet/wordpress-angular-plugin) which provides the source for the working demo. This example app should demonstrate the following concepts I commonly come across when building Angular apps in WordPress:
 
-This WordPress Angular.js tutorial should help you grasp a few key things about working with Angular.js inside of WordPress, specifically when using a self-installed WordPress install as a backend API service for serving HTTP requests to an Angular.js client on the front-end. The [sample plugin on GitHub](https://github.com/Kevinlearynet/wordpress-angular-plugin) demonstrations the following concept I commonly come accross when building microservices with this approach:
+1. How to work with HTML5 pushState routing
+1. Creating custom API endpoints that are consumed by Angular's `$resource` service
+1. Work with gulp to compile your front-end's LESS, JS and more with a build process
+1. Auto-version your CSS and JS includes
+1. Setup browser cache rules for `/api/**` routes to reduce requests per second (when it makes sense to)
+1. How to handle it all inside of an isolated WordPress plugin
 
-1. Setup HTML5 pushState routing
-2. Create custom API endpoints that are consumed by Angular's `$resource` service
-3. Build LESS, JS and dynamic HTML with a gulp build
-4. Auto-version CSS and JS inside of a dynamic HTML template (using Gulp)
-5. How to handle it all inside of an isolated WordPress plugin
-
-If there's a common scenario you would like me to add to this tutorial please let me know in the [blog post comments at kevinleary.net](https://www.kevinleary.net/blog/).
+**If there's a common scenario I didn't mention that you would like to recommend please let me know in the [blog post comments](https://www.kevinleary.net/angularjs-wordpress-tutorial/#respond).**
 
 ## Table of Contents
 
@@ -34,7 +32,7 @@ If there's a common scenario you would like me to add to this tutorial please le
 
 ## <a name="wordpress-plugin"></a>WordPress Plugin
 
-To begin we need to start with a fresh WordPress plugin, which I'm assuming you know how to setup. If not then I recommend reading the [detailed plugin guidelines](https://developer.wordpress.org/plugins/wordpress-org/detailed-plugin-guidelines/) provided on WordPress.org. The plugin will serve as a backend to our angular app, handling the following tasks:
+To begin we we'll start by creating a fresh WordPress plugin. I'm assuming you know how to do this already, but if not then I recommend reading the [detailed plugin guidelines](https://developer.wordpress.org/plugins/wordpress-org/detailed-plugin-guidelines/) provided on WordPress.org. This plugin will serve as a backend to our angular app, and will handling the following logic for us:
 
 1. Add routing rules to WordPress for serving custom API endpoints
 2. Add routing rules to WordPress to load our base app index template at `/wordpress-angular-plugin/**`. The trailing wildcard is critical for supporting HTML5 pushState routing within our Angular app.
@@ -42,13 +40,13 @@ To begin we need to start with a fresh WordPress plugin, which I'm assuming you 
 
 ### Why a plugin and not a theme?
 
-In my opinion there are a few key benefits to building both the backend and front-end inside of a single WordPress plugin:
+There are a few key benefits to building both the backend and front-end inside of a single WordPress plugin:
 
 1. **Simplicity:** I don't have to support two separate servers, one for a WordPress backend API and another for serving the Angular.js app's HTML. With this approach I can easily do both from one environment.
 1. **Access to WP:** I've found that it's useful to have easy server-side access to WordPress when working with it as a backend. A few scenarios include processing Gravity Forms submissions, passing values from server-side to client-side with `wp_localize_script()` when users are logged in, and various other things.
 1. **Portability** By isolating everything into a WordPress plugin we can easily move our entire app from site to site, enabling and disabling on demand.
 
-If you disagree that's fine, all of the logic here could be used within a WordPress theme as well, the same concepts apply.
+All of the logic described in this tutorial could be used within a WordPress theme as well, the same concepts apply.
 
 ### Server-side routing
 
@@ -68,18 +66,20 @@ public function intercept_wp_router( $continue, WP $wp, $extra_query_vars ) {
 	if ( ! $url_match ) 
 		return $continue;
 
-	// Serve HTML
-	ob_start();
-
 	// Vars for index view
 	$main_js = $this->auto_version_file( 'dist/js/main.js' );
 	$main_css = $this->auto_version_file( 'dist/css/main.css' );
 	$plugin_url = $this->plugin_url;
+	$base_href = $this->base_href;
+	$page_title = 'WordPress Angular.js Plugin Demo App | kevinleary.net';
+
+	// Browser caching for our main template
+	$ttl = DAY_IN_SECONDS;
+	header( "Cache-Control: public, max-age=$ttl" );
 
 	// Load index view
 	include_once( $this->plugin_dir . 'views/index.php' );
-	$html = ob_get_clean();
-	die( $html );
+	exit;
 }
 ~~~
 
@@ -239,3 +239,7 @@ The `less` task is pretty straight forward. It compiles LESS to CSS, with the fo
 
 1. Backwards support to automatically add browser prefixes with autoprefixer
 2. Concatenation and minification handled by cleanCSS
+
+## Conclusion
+
+The combination of an Angular.js front-end and a WordPress API backend provides a powerful framework for building all kinds of find things. Hopefully this tutorial gives you a few ideas about how work with the two technologies in your projects. I do myself all the time. **If you have any questions, comments or feedback please let me know in the comments below.**
