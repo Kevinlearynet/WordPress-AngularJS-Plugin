@@ -25,6 +25,7 @@ class ngApp
 		// General
 		$this->plugin_dir = plugin_dir_path( __FILE__ );
 		$this->plugin_url = plugins_url( '/', __FILE__ );
+		$this->versions = array();
 
 		// Routing
 		$this->api_route = '^api/weather/(.*)/?'; // Matches /api/weather/{position}
